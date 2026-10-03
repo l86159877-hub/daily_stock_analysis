@@ -526,6 +526,14 @@ jobs:
             echo "⚡ 已启用强制运行模式（跳过交易日检查）"
           fi
 
+          # Validate the API key before it is used as an HTTP header. Never print its value.
+          python - <<'PY'
+          import os
+          key = os.environ.get("OPENAI_API_KEY", "")
+          if key and (not key.isascii() or any(char.isspace() for char in key)):
+              raise SystemExit("OPENAI_API_KEY must be a single ASCII token. Update the GitHub Actions secret.")
+          PY
+
           # 执行分析
           if [ "$MODE" = "market-only" ]; then
             python main.py --market-review $FORCE_RUN_ARG
