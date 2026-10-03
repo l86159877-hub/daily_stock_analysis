@@ -1113,6 +1113,10 @@ def run_full_analysis(
             and not skip_futu_stock_analysis
         )
         deferred_failure_result = None
+        if expected_stock_report and not results:
+            _LAST_ANALYSIS_FAILURE_REASON = "no_stock_report"
+            logger.error("本轮未生成个股分析报告，任务标记为失败。")
+            deferred_failure_result = False
         if expected_stock_report and results and not getattr(
             pipeline, "_last_local_report_path", None
         ):
